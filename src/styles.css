@@ -10,8 +10,7 @@ body {
   font-family: 'Orbitron', monospace;
   background: radial-gradient(ellipse at center, #0a0a0a 0%, #000 100%);
   color: #00ff88;
-  overflow: hidden;
-  height: 100vh;
+  overflow-x: hidden;
 }
 
 #root {
@@ -21,7 +20,7 @@ body {
 }
 
 .canvas-container {
-  position: absolute;
+  position: fixed;  /* Fixed for background */
   top: 0;
   left: 0;
   width: 100%;
@@ -30,50 +29,295 @@ body {
 }
 
 .ui-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  position: relative;  /* Relative for scroll */
   z-index: 10;
-  pointer-events: none;
+  height: 100vh;
+  overflow-y: auto;  /* Enable scroll over 3D */
+  pointer-events: all;  /* Allow interactions */
   display: flex;
   flex-direction: column;
 }
 
-.fission-initiator {
+.app { min-height: 100vh; position: relative; }
+
+.nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.8);
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.nav-logo { font-weight: 900; color: #00ff88; }
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+.nav-links a {
+  color: #00ff88;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover { color: #ff0088; }
+
+.section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 6rem 2rem 2rem;  /* Space for nav */
+  color: #fff;
+  position: relative;
+  z-index: 20;  /* Above canvas/chat */
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.bio-card {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.bio-photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 2px solid #00ff88;
+  margin-bottom: 1rem;
+  object-fit: cover;
+}
+
+h1 { font-size: 3rem; margin-bottom: 1rem; text-align: center; }
+h2 { font-size: 1.5rem; color: #ff0088; margin-bottom: 1rem; text-align: center; }
+
+.cta-button {
+  background: linear-gradient(45deg, #00ff88, #0088ff);
+  color: #000;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.3s;
+}
+
+.cta-button:hover { transform: scale(1.05); }
+
+.skills-grid, .projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.skill-card, .project-card {
+  background: rgba(0,255,136,0.1);
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  border: 1px solid rgba(0,255,136,0.3);
+}
+
+.skill-card:hover, .project-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0,255,136,0.5);
+}
+
+.skill-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #00ff88;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: #000;
+  font-size: 1.5rem;
+}
+
+.project-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.project-metrics {
+  font-weight: bold;
+  color: #00ff88;
+  margin: 0.5rem 0;
+}
+
+.contact-form {
+  max-width: 500px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-form input, .contact-form textarea {
+  padding: 1rem;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid #00ff88;
+  color: #fff;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.contact-form textarea { min-height: 100px; resize: vertical; }
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.social-links a {
+  color: #00ff88;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: 1px solid #00ff88;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.social-links a:hover { background: #00ff88; color: #000; }
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.8);
+  text-align: center;
+  padding: 1rem;
+  z-index: 40;
+  border-top: 1px solid #00ff88;
+}
+
+.footer a { color: #00ff88; text-decoration: none; }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: #000;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 600px;
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+  border: 1px solid #00ff88;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.modal-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.modal-metrics {
+  font-weight: bold;
+  color: #00ff88;
+  margin: 1rem 0;
+}
+
+.modal-tech {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.modal-tech li {
+  background: #00ff88;
+  color: #000;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.modal-links {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.modal-links a {
+  background: #00ff88;
+  color: #000;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.modal-links a:hover { background: #0088ff; }
+
+.init-button {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 20;
+  z-index: 30;
   pointer-events: all;
-  text-align: center;
-  background: rgba(0, 255, 136, 0.1);
-  border: 1px solid #00ff88;
-  border-radius: 8px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-}
-
-button {
   background: linear-gradient(45deg, #00ff88, #0088ff);
-  border: none;
   color: #000;
-  padding: 10px 20px;
-  font-family: inherit;
-  font-weight: 700;
+  padding: 1rem 2rem;
+  border: none;
   border-radius: 4px;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s;
-}
-
-button:hover {
-  transform: scale(1.05);
+  font-size: 1.2rem;
 }
 
 .chatbot {
-  position: absolute;
+  position: fixed;
   bottom: 20px;
   left: 20px;
   width: 300px;
@@ -81,18 +325,36 @@ button:hover {
   background: rgba(0, 0, 0, 0.8);
   border: 1px solid #00ff88;
   border-radius: 8px;
-  padding: 10px;
+  padding: 1rem;
   overflow-y: auto;
-  pointer-events: all;  /* Add: Enable interactions */
-  z-index: 15;  /* Ensure above canvas */
+  z-index: 15;
+  pointer-events: all;
 }
 
-.chatbot input:focus {
-  outline: 1px solid #00ff88;  /* Visual feedback on focus */
+.chatbot h3 { margin-bottom: 1rem; color: #00ff88; }
+
+.chat-messages {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.chat-messages p { margin: 0.5rem 0; }
+
+.ai-msg { color: #00ff88; }
+.user-msg { color: #ff0088; text-align: right; }
+
+.chatbot input {
+  width: 100%;
+  padding: 0.5rem;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid #00ff88;
+  color: #fff;
+  border-radius: 4px;
 }
 
 .gauge {
-  position: absolute;
+  position: fixed;
   bottom: 20px;
   right: 20px;
   width: 200px;
@@ -100,18 +362,18 @@ button:hover {
   background: rgba(0, 255, 136, 0.2);
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);  /* Glow for visibility */
+  z-index: 15;
+  pointer-events: all;
 }
 
 .gauge-fill {
   height: 100%;
   background: linear-gradient(90deg, #ff0088, #00ff88);
-  transition: width 1s ease;  /* Smoother */
+  transition: width 1s ease;
   border-radius: 10px;
-  position: relative;
 }
 
-.gauge-fill::after {  /* Tick animation */
+.gauge-fill::after {
   content: '';
   position: absolute;
   top: 0;
@@ -128,10 +390,10 @@ button:hover {
 }
 
 @media (max-width: 768px) {
+  .nav { padding: 1rem; flex-direction: column; gap: 1rem; }
+  .nav-links { flex-direction: column; gap: 1rem; }
+  .section { padding: 4rem 1rem 1rem; }
   .chatbot { width: 90%; left: 5%; }
   .gauge { width: 150px; bottom: 10px; right: 10px; }
-}
-
-.canvas-container canvas {
-  cursor: pointer; /* Hand on hover for clicks */
+  .init-button { font-size: 1rem; padding: 0.75rem 1.5rem; }
 }
