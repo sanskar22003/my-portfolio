@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Orbitron', monospace;
+  background: radial-gradient(ellipse at center, #0a0a0a 0%, #000 100%);
+  color: #00ff88;
+  overflow: hidden;
+  height: 100vh;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.ui-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.fission-initiator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  pointer-events: all;
+  text-align: center;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid #00ff88;
+  border-radius: 8px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+}
+
+button {
+  background: linear-gradient(45deg, #00ff88, #0088ff);
+  border: none;
+  color: #000;
+  padding: 10px 20px;
+  font-family: inherit;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+.chatbot {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 300px;
+  max-height: 400px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid #00ff88;
+  border-radius: 8px;
+  padding: 10px;
+  overflow-y: auto;
+  pointer-events: all;  /* Add: Enable interactions */
+  z-index: 15;  /* Ensure above canvas */
+}
+
+.chatbot input:focus {
+  outline: 1px solid #00ff88;  /* Visual feedback on focus */
+}
+
+.gauge {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 200px;
+  height: 20px;
+  background: rgba(0, 255, 136, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);  /* Glow for visibility */
+}
+
+.gauge-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff0088, #00ff88);
+  transition: width 1s ease;  /* Smoother */
+  border-radius: 10px;
+  position: relative;
+}
+
+.gauge-fill::after {  /* Tick animation */
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: #fff;
+  animation: tick 1s infinite;
+}
+
+@keyframes tick {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .chatbot { width: 90%; left: 5%; }
+  .gauge { width: 150px; bottom: 10px; right: 10px; }
+}
+
+.canvas-container canvas {
+  cursor: pointer; /* Hand on hover for clicks */
+}
